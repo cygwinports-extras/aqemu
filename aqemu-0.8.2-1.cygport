@@ -1,0 +1,8 @@
+inherit qt4-cmake
+
+
+HOMEPAGE="http://sourceforge.net/projects/aqemu/"
+SRC_URI="mirror://sourceforge/aqemu/${P}.tar.bz2"
+PATCH_URI="0.8.2-cygwin.patch"
+
+DIFF_EXCLUDES="*.bz2 *.rcc"

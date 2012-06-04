@@ -1,0 +1,74 @@
+--- origsrc/aqemu-0.8.2/CMakeLists.txt	2011-01-14 13:38:53.000000000 -0600
++++ src/aqemu-0.8.2/CMakeLists.txt	2012-05-24 03:16:19.183928600 -0500
+@@ -164,7 +164,6 @@ IF( NOT WITHOUT_EMBEDDED_DISPLAY )
+ 										Embedded_Display/vncclientthread.cpp Embedded_Display/vncview.cpp )
+ 	
+ 	ADD_DEFINITIONS( -DVNC_DISPLAY -DQTONLY )
+-	ADD_LIBRARY( libvncclient SHARED ${aqemu_headers} ${aqemu_sources} )
+ 	
+ 	INCLUDE_DIRECTORIES( ${VNCCLIENT_INCLUDE_DIRS} ${LIBVNCCLIENT_INCLUDE_DIR} )
+ ENDIF( NOT WITHOUT_EMBEDDED_DISPLAY )
+--- origsrc/aqemu-0.8.2/Embedded_Display/vncview.cpp	2010-02-26 07:40:40.000000000 -0600
++++ src/aqemu-0.8.2/Embedded_Display/vncview.cpp	2012-05-24 03:01:18.458051000 -0500
+@@ -27,8 +27,6 @@
+     #include <QMessageBox>
+     #include <QInputDialog>
+     #define KMessageBox QMessageBox
+-    #define error(parent, message, caption) \
+-        critical(parent, caption, message)
+ #else
+     #include "settings.h"
+     #include <KActionCollection>
+--- origsrc/aqemu-0.8.2/System_Info.cpp	2011-07-26 14:34:58.000000000 -0500
++++ src/aqemu-0.8.2/System_Info.cpp	2012-05-24 03:08:45.320795300 -0500
+@@ -2904,6 +2904,10 @@ bool System_Info::Scan_USB_Proc( QList<V
+ 	return true;
+ }
+ 
++#endif // Linux
++
++#if defined(Q_OS_CYGWIN) || defined(Q_OS_LINUX)
++
+ #include <sys/sysinfo.h>
+ #include <QDir>
+ #include <QFileInfoList>
+@@ -3048,7 +3052,7 @@ QStringList System_Info::Get_Host_CDROM_
+ 	return tmp_list;
+ }
+ 
+-#endif // Linux
++#endif // Linux || Cygwin
+ 
+ #ifdef Q_OS_FREEBSD
+ 
+@@ -3124,13 +3128,6 @@ QStringList System_Info::Get_Host_CDROM_
+ 	return tmp_list;
+ }
+ 
+-bool System_Info::Update_Host_USB()
+-{
+-	AQError( "System_Info::Update_Host_USB()",
+-			 "Not implemented!" );
+-	return false;
+-}
+-
+ #endif // FreeBSD
+ 
+ #ifdef Q_OS_WIN32
+@@ -3217,6 +3214,10 @@ QStringList System_Info::Get_Host_CDROM_
+ 	return ret_list;
+ }
+ 
++#endif // Windows
++
++#ifndef Q_OS_LINUX
++
+ bool System_Info::Update_Host_USB()
+ {
+ 	AQError( "System_Info::Update_Host_USB()",
+@@ -3224,4 +3225,4 @@ bool System_Info::Update_Host_USB()
+ 	return false;
+ }
+ 
+-#endif // Windows
++#endif // ! Linux
